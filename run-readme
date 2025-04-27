@@ -1,0 +1,2 @@
+
+streamlit run --logger.level debug --server.enableCORS=false --server.sslKeyFile key.pem --server.sslCertFile cert.pem streamlit_app.py
