@@ -1,5 +1,3 @@
-user_activity_2025-04-24.log
-.streamlit/*
 .streamlit/secrets.toml
 .streamlit/config.toml
 menu/utils/__pycache__/chatclient.cpython-312.pyc
