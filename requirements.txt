@@ -1,4 +1,9 @@
-streamlit
+streamlit>=1.36.0
 streamlit-authenticator
 python-keycloak
-streamlit-ts
+langchain>=0.3.24 
+langchain-community>=0.3.23
+langchain_openai>=0.3.14
+twilio
+python-dotenv>=1.1.0
+beautifulsoup4

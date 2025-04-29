@@ -1,0 +1,74 @@
+# Project Createion
+"""
+uv init streamlit-uv-docker
+"""
+
+# Add Streamlit as a dependency.
+"""
+uv add streamlit
+"""
+
+# Adding modules for development
+"""
+uv add --dev ruff
+"""
+
+# Streamlit running
+"""
+uv run streamlit hello
+
+uv run streamlit run app\app.py
+"""
+
+# Creating a Dockerfile
+"""
+FROM python:3.12-slim-bookworm
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+ADD . /app
+
+WORKDIR /app
+
+RUN uv sync --frozen
+
+CMD ["uv", "run", "streamlit", "run", "app.py"]
+"""
+
+Install uv locally
+"""
+FROM python:3.12-slim-bookworm
+
+# 저장소 정보를 갱신 & & curl을 설치하여 활성화해 둡니다
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+
+# 최신 설치 프로그램을 다운로드
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+
+# 설치 프로그램을 사용하여 설치하고 설치 프로그램 삭제
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# PATH 환경 변수에 패스가 통과되었는지 확인
+ENV PATH="/root/.local/bin/:$PATH"
+"""
+
+# using .dockerignore
+"""
+< .docerignore >
+.dockerignore
+
+# Ignore the virtual environment
+.venv
+
+"""
+
+# Build Docker Image
+"""
+docker build . -t streamlit-uv
+"""
+
+# Running
+# default streamlit port is 8501, portforwading 80 to 8501
+"""
+docker run -p 80:8501 --name "st-uv" streamlit-uv
+"""

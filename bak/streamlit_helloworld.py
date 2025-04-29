@@ -1,7 +1,5 @@
 import streamlit as st
 from keycloak import KeycloakOpenID
-from utils.menu import Menu
-
 
 # Keycloak configuration variables
 KEYCLOAK_SERVER_URL = "http://150.230.98.136:18080/"  # Base URL of the Keycloak server

@@ -1,7 +1,9 @@
 import streamlit as st
+from time import sleep
 from keycloak import KeycloakOpenID
 from utils.menu import Menu
 
+Menu().render_menu()
 
 # Keycloak configuration variables
 KEYCLOAK_SERVER_URL = "http://150.230.98.136:18080/"  # Base URL of the Keycloak server
@@ -23,17 +25,11 @@ if "token" not in st.session_state:
     st.session_state["token"] = None
 
 if st.session_state["token"] is None:
-    #login_url = keycloak_openid.auth_url(redirect_uri=KEYCLOAK_REDIRECT_URI)
-
-    # if st.button("Login"):
-    #     st.write(f"Please visit the following URL to log in: {login_url}")
-
     # Option to log in using username and password
     st.write("Log In using your username and password")
+    
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
-
-    st.info("Please log in to continue.")
     
     if st.button("Login"):
         try:
@@ -45,41 +41,29 @@ if st.session_state["token"] is None:
                 client_id=KEYCLOAK_CLIENT_ID,
                 client_secret_key=KEYCLOAK_CLIENT_SECRET,
             )
-            st.session_state["token"] = token
+            st.session_state.token = token
+            
             st.success("Login successful!")
             
-            # Redirect to another page
-            st.query_params(page="dashboard")
+            # User Info: {'sub': '1784f0b5-75e5-461e-8779-d4d73487f298', 'email_verified': False, 'name': 'Thomas Kim', 'preferred_username': 'thomaskim', 'given_name': 'Thomas', 'family_name': 'Kim', 'email': 'kimsh92@example.com'}
+            userinfo = keycloak_openid.userinfo(token['access_token'])
+            st.session_state.username = userinfo.get("username", [])
+            st.session_state.role = userinfo.get("realm_access", {}).get("roles", ["user"])[0]
+            st.session_state.token = token['access_token']
+            
+            st.write(f"User Info: {userinfo}")
+            st.write(f"Token: {st.session_state.token}")
+            st.write(f"Role: {userinfo.get("realm_access", {})}")
+            #sleep(1)
+            
+            # Redirect to the main page
+            #Menu().set_role("user")
+            #Menu().render_menu_with_redirect()
+            
         except Exception as error:
             st.error(f"Login failed: {error}")
-
-    # if auth_code:
-    #     try:
-    #         token = keycloak_openid.token(auth_code=auth_code)
-    #         st.session_state["token"] = token
-    #         st.success("Login successful!")
-    #     except Exception as error:
-    #         st.error(f"Login failed: {error}")
-    # else:
-    #     st.info("Waiting for authorization code...")
+            pass
 else:
-    st.write("You are logged in!")
-    st.write(st.session_state["token"])
-    
-        # Use st.query_params to get query parameters
-    query_params = st.query_params
-    st.write("Query Parameters:", query_params)
-
-    auth_code = query_params.get("code", [None])[0]
-    st.write("Authorization Code:", auth_code)
-
-    if st.button("Logout"):
-        st.session_state["token"] = None
-        st.success("Logged out successfully!")
-
-# Handle redirection to other pages
-query_params = st.query_params  # Replace experimental_get_query_params with query_params
-if query_params.get("page") == ["dashboard"]:
-    st.write("Welcome to the Dashboard!")
-    st.write("This is another page after successful login.")
-    # Add dashboard content here
+    # If already logged in, show the token and role
+    st.info("You are already logged in.")
+    Menu().render_menu_with_redirect()
