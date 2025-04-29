@@ -1,6 +1,7 @@
 import streamlit as st
 
 from openai import OpenAI
+from langchain.globals import set_debug
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -8,6 +9,9 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from utils.chatclient import ChatClient
 from utils.llmclient import LLMClient
 from utils.chatutils import stream_response
+
+# langchain debug
+set_debug(False)
 
 # Get an API Key before continuing
 if not st.secrets.llm.api_key or not st.secrets.llm.base_url:   
