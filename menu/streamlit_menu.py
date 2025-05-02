@@ -79,11 +79,11 @@ with st.sidebar:
     # st.button("Submit")
     if st.button("Logout"):
         del st.session_state["logged_in"]
+        st.session_state = {}
         st.rerun()
 
 
 ### Add pages as functions (can also point to separate files) ###
-
 # Page Navigation
 pg = st.navigation({
     "AI Chatbot": [
